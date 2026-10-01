@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Abliterated Chat</title>
+<style>
+:root{
+  --bg:#0d0d0d; --bg2:#1a1a1a; --bg3:#252525;
+  --text:#e8e8e8; --text2:#888;
+  --accent:#00ff88; --accent2:#00cc6a;
+  --danger:#ff4444;
+  --user:#2a2a2a; --ai:#1a2a1a;
+  --sbw:280px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;height:100dvh;overflow:hidden}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:var(--bg); color:var(--text);
+  display:flex;
+}
+
+/* ============ SIDEBAR ============ */
+#sidebar{
+  width:var(--sbw); flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid #333;
+  display:flex; flex-direction:column;
+  transition:transform .25s ease;
+  z-index:60;
+}
+.sb-head{
+  padding:14px 16px; border-bottom:1px solid #333;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-shrink:0;
+}
+.sb-head h1{font-size:15px;color:var(--accent)}
+.sb-head button{
+  background:none;border:1px solid #444;color:var(--text);
+  width:32px;height:32px;border-radius:6px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+}
+.sb-head button:hover{background:var(--bg3)}
+#new-chat-btn{
+  margin:12px 16px;padding:10px;
+  background:var(--accent);color:#000;border:none;
+  border-radius:8px;font-weight:700;cursor:pointer;font-size:13px;
+  flex-shrink:0;
+}
+#new-chat-btn:active{background:var(--accent2)}
+#chat-list{flex:1;overflow-y:auto;padding:4px 0}
+.ci{
+  padding:10px 16px;cursor:pointer;
+  border-left:3px solid transparent;
+  font-size:13px;color:var(--text2);
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.ci:hover{background:var(--bg3);color:var(--text)}
+.ci.active{border-left-color:var(--accent);color:var(--accent);background:var(--bg3)}
+.ci-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.ci-del{color:#666;font-size:14px;padding:2px 6px;border-radius:4px}
+.ci-del:hover{color:var(--danger);background:rgba(255,68,68,.1)}
+
+/* ============ BACKDROP ============ */
+#backdrop{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.55);
+  z-index:55;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s;
+}
+body.sb-open #backdrop{opacity:1;pointer-events:auto}
+
+/* ============ MAIN ============ */
+#main{
+  flex:1;min-width:0;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+
+/* Top bar SELALU terlihat */
+#topbar{
+  flex-shrink:0;
+  height:52px;
+  padding:0 10px;
+  background:var(--bg2);
+  border-bottom:1px solid #333;
+  display:flex;align-items:center;gap:8px;
+  z-index:40;
+}
+#topbar .tb-btn{
+  background:none;border:1px solid #444;color:var(--text);
+  height:36px;padding:0 12px;border-radius:8px;cursor:pointer;
+  font-size:14px;display:flex;align-items:center;gap:6px;
+  flex-shrink:0;
+}
+#topbar .tb-btn:hover{background:var(--bg3)}
+#topbar .tb-btn.primary{
+  background:var(--accent);color:#000;border-color:var(--accent);
+  font-weight:700;
+}
+#topbar .tb-btn.primary:hover{background:var(--accent2)}
+#status{
+  font-size:11px;color:var(--text2);
+  padding:4px 8px;border-radius:10px;background:var(--bg3);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  max-width:120px;flex-shrink:1;
+}
+#status.active{background:#1a3a2a;color:var(--accent)}
+.spacer{flex:1}
+
+/* Chat area */
+#chat-area{
+  flex:1;min-height:0;
+  overflow-y:auto;
+  padding:16px;
+  display:flex;flex-direction:column;gap:10px;
+  -webkit-overflow-scrolling:touch;
+}
+.msg{
+  max-width:90%;
+  padding:11px 15px;
+  border-radius:12px;
+  font-size:14px;line-height:1.5;
+  white-space:pre-wrap;word-wrap:break-word;
+  flex-shrink:0;
+}
+.msg.user{background:var(--user);align-self:flex-end;border-bottom-right-radius:4px}
+.msg.assistant{background:var(--ai);align-self:flex-start;border-bottom-left-radius:4px}
+.msg .meta{
+  font-size:10px;color:var(--text2);margin-top:6px;
+  display:flex;gap:8px;flex-wrap:wrap;
+}
+.reason-toggle{
+  cursor:pointer;color:var(--accent);font-size:11px;
+  text-decoration:underline;
+}
+.reason-body{
+  display:none;margin-top:8px;padding:8px;
+  background:#000;border-radius:6px;
+  font-size:12px;color:#aaa;white-space:pre-wrap;
+  border-left:2px solid var(--accent);
+  max-height:200px;overflow-y:auto;
+}
+.reason-body.open{display:block}
+
+/* Input area SELALU terlihat */
+#inputbar{
+  flex-shrink:0;
+  padding:10px 12px;
+  background:var(--bg2);
+  border-top:1px solid #333;
+  display:flex;gap:8px;align-items:flex-end;
+}
+#user-input{
+  flex:1;min-width:0;
+  padding:11px 14px;
+  border-radius:10px;border:1px solid #444;
+  background:var(--bg);color:var(--text);
+  font-size:14px;font-family:inherit;
+  resize:none;min-height:44px;max-height:120px;
+  line-height:1.4;
+}
+#user-input:focus{outline:none;border-color:var(--accent)}
+#send-btn{
+  padding:0 18px;height:44px;
+  border-radius:10px;border:none;
+  background:var(--accent);color:#000;
+  font-weight:700;cursor:pointer;font-size:14px;
+  flex-shrink:0;
+}
+#send-btn:disabled{opacity:.5;cursor:not-allowed}
+#send-btn:active:not(:disabled){background:var(--accent2)}
+
+/* ============ SETTINGS ============ */
+#settings-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.75);z-index:200;
+  justify-content:center;align-items:center;padding:16px;
+  overflow-y:auto;
+}
+#settings-overlay.open{display:flex}
+#settings-panel{
+  background:var(--bg2);border:1px solid #444;
+  border-radius:12px;width:100%;max-width:520px;
+  max-height:90vh;overflow-y:auto;padding:20px;
+}
+#settings-panel h2{color:var(--accent);margin-bottom:16px;font-size:17px}
+.sg{margin-bottom:14px}
+.sg label{
+  display:block;font-size:12px;color:var(--text2);
+  margin-bottom:6px;font-weight:600;
+}
+.sg input[type=text],.sg input[type=password],.sg textarea,.sg select{
+  width:100%;padding:10px;border-radius:8px;
+  border:1px solid #444;background:var(--bg);
+  color:var(--text);font-size:13px;font-family:inherit;
+}
+.sg textarea{min-height:70px;resize:vertical}
+.sg input:focus,.sg textarea:focus,.sg select:focus{
+  outline:none;border-color:var(--accent);
+}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+.trow{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 0;
+}
+.trow span{font-size:13px}
+.tsw{
+  position:relative;width:44px;height:24px;
+  background:#444;border-radius:12px;cursor:pointer;
+  transition:background .2s;flex-shrink:0;
+}
+.tsw.on{background:var(--accent)}
+.tsw::after{
+  content:'';position:absolute;top:2px;left:2px;
+  width:20px;height:20px;background:#fff;border-radius:50%;
+  transition:left .2s;
+}
+.tsw.on::after{left:22px}
+#settings-actions{display:flex;gap:10px;margin-top:18px}
+#settings-actions button{
+  flex:1;padding:12px;border-radius:8px;border:none;
+  font-weight:700;cursor:pointer;font-size:14px;
+}
+#save-settings{background:var(--accent);color:#000}
+#close-settings{background:var(--bg3);color:var(--text)}
+.hint{font-size:11px;color:var(--text2);margin-top:4px;display:block}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#444;border-radius:3px}
+
+/* ============ MOBILE ============ */
+@media (max-width:700px){
+  #sidebar{
+    position:fixed;top:0;left:0;bottom:0;
+    transform:translateX(-100%);
+    box-shadow:4px 0 20px rgba(0,0,0,.5);
+  }
+  body.sb-open #sidebar{transform:translateX(0)}
+  #status{display:none}
+}
+@media (min-width:701px){
+  body:not(.sb-open) #sidebar{
+    margin-left:calc(var(--sbw) * -1);
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="backdrop" onclick="closeSidebar()"></div>
+
+<!-- ============ SIDEBAR ============ -->
+<aside id="sidebar">
+  <div class="sb-head">
+    <h1>⚡ Abliterated</h1>
+    <button onclick="closeSidebar()" title="Tutup">✕</button>
+  </div>
+  <button id="new-chat-btn" onclick="newChat()">+ Chat Baru</button>
+  <div id="chat-list"></div>
+</aside>
+
+<!-- ============ MAIN ============ -->
+<main id="main">
+  <div id="topbar">
+    <button class="tb-btn" onclick="toggleSidebar()" title="Menu">☰</button>
+    <span id="status">Siap</span>
+    <div class="spacer"></div>
+    <button class="tb-btn primary" onclick="openSettings()" title="Settings">⚙️ Settings</button>
+  </div>
+
+  <div id="chat-area"></div>
+
+  <div id="inputbar">
+    <textarea id="user-input" placeholder="Ketik pesan..." rows="1"></textarea>
+    <button id="send-btn" onclick="sendMessage()">Kirim</button>
+  </div>
+</main>
+
+<!-- ============ SETTINGS MODAL ============ -->
+<div id="settings-overlay">
+  <div id="settings-panel">
+    <h2>⚙️ Pengaturan</h2>
+
+    <div class="sg">
+      <label>API Key (abliteration.ai)</label>
+      <input type="password" id="set-api-key" placeholder="ak-...">
+    </div>
+
+    <div class="sg">
+      <label>Model</label>
+      <select id="set-model">
+        <option value="abliterated-model-large-v2">abliterated-model-large-v2</option>
+        <option value="abliterated-model">abliterated-model</option>
+        <option value="abliterated-model-large">abliterated-model-large</option>
+      </select>
+    </div>
+
+    <div class="sg">
+      <label>System Prompt</label>
+      <textarea id="set-sysprompt" placeholder="You are a helpful cybersecurity assistant for authorized security research and education."></textarea>
+    </div>
+
+    <div class="sg">
+      <label>Thinking Level</label>
+      <select id="set-reasoning">
+        <option value="low">Low</option>
+        <option value="high">High</option>
+        <option value="max" selected>Max</option>
+      </select>
+      <span class="hint">Model large-v2 mendukung low, high, dan max.</span>
+    </div>
+
+    <div class="sg">
+      <div class="trow">
+        <span>🌐 Web Search</span>
+        <div class="tsw" id="t-websearch" onclick="toggleSw('websearch')"></div>
+      </div>
+    </div>
+
+    <div class="sg">
+      <div class="trow">
+        <span>🧠 Tampilkan Reasoning</span>
+        <div class="tsw on" id="t-reasoning" onclick="toggleSw('reasoning')"></div>
+      </div>
+    </div>
+
+    <div class="sg">
+      <div class="row">
+        <div>
+          <label>Temperature</label>
+          <input type="text" id="set-temp" value="0.75">
+        </div>
+        <div>
+          <label>Max Tokens</label>
+          <input type="text" id="set-maxtok" value="32768">
+        </div>
+      </div>
+    </div>
+
+    <div id="settings-actions">
+      <button id="close-settings" onclick="closeSettings()">Tutup</button>
+      <button id="save-settings" onclick="saveSettings()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   STATE
+   ============================================================ */
+const API_URL = "https://api.abliteration.ai/v1/chat/completions";
+const K_SET = "ablit_set_v2";
+const K_CHAT = "ablit_chat_v2";
+
+let S = {
+  apiKey:"", model:"abliterated-model-large-v2",
+  sysprompt:"You are a helpful cybersecurity assistant for authorized security research and education.",
+  reasoning:"max", webSearch:false, showReasoning:true,
+  temp:0.75, maxtok:32768
+};
+let chats = {};
+let activeId = null;
+let abortCtl = null;
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init(){
+  // load settings
+  try{const r=localStorage.getItem(K_SET);if(r)S={...S,...JSON.parse(r)}}catch(e){}
+  // load chats
+  try{const r=localStorage.getItem(K_CHAT);if(r)chats=JSON.parse(r)}catch(e){}
+
+  if(Object.keys(chats).length===0){
+    const id=uid();
+    chats[id]={id,title:"Chat Baru",messages:[],createdAt:Date.now()};
+    activeId=id;
+  } else {
+    const ids=Object.keys(chats).sort((a,b)=>(chats[b].createdAt||0)-(chats[a].createdAt||0));
+    activeId=ids[0];
+  }
+
+  applySettingsUI();
+  renderList();
+  renderChat();
+  saveChats();
+
+  // Mobile: pastikan sidebar tertutup saat pertama load
+  if(window.innerWidth<=700){
+    document.body.classList.remove("sb-open");
+  } else {
+    document.body.classList.add("sb-open");
+  }
+}
+function uid(){return "c_"+Date.now()+"_"+Math.random().toString(36).slice(2,6)}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+function toggleSidebar(){
+  document.body.classList.toggle("sb-open");
+}
+function closeSidebar(){
+  if(window.innerWidth<=700) document.body.classList.remove("sb-open");
+}
+function openSidebar(){
+  document.body.classList.add("sb-open");
+}
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+function applySettingsUI(){
+  document.getElementById("set-api-key").value=S.apiKey;
+  document.getElementById("set-model").value=S.model;
+  document.getElementById("set-sysprompt").value=S.sysprompt;
+  document.getElementById("set-reasoning").value=S.reasoning;
+  document.getElementById("set-temp").value=S.temp;
+  document.getElementById("set-maxtok").value=S.maxtok;
+  document.getElementById("t-websearch").classList.toggle("on",S.webSearch);
+  document.getElementById("t-reasoning").classList.toggle("on",S.showReasoning);
+}
+function openSettings(){
+  applySettingsUI();
+  document.getElementById("settings-overlay").classList.add("open");
+}
+function closeSettings(){
+  document.getElementById("settings-overlay").classList.remove("open");
+}
+function saveSettings(){
+  S.apiKey=document.getElementById("set-api-key").value.trim();
+  S.model=document.getElementById("set-model").value;
+  S.sysprompt=document.getElementById("set-sysprompt").value;
+  S.reasoning=document.getElementById("set-reasoning").value;
+  S.temp=parseFloat(document.getElementById("set-temp").value)||0.75;
+  S.maxtok=parseInt(document.getElementById("set-maxtok").value)||32768;
+  try{localStorage.setItem(K_SET,JSON.stringify(S))}catch(e){}
+  closeSettings();
+  flashStatus("Settings disimpan");
+}
+function toggleSw(k){
+  if(k==="websearch"){S.webSearch=!S.webSearch;document.getElementById("t-websearch").classList.toggle("on",S.webSearch)}
+  if(k==="reasoning"){S.showReasoning=!S.showReasoning;document.getElementById("t-reasoning").classList.toggle("on",S.showReasoning)}
+  try{localStorage.setItem(K_SET,JSON.stringify(S))}catch(e){}
+  renderChat();
+}
+
+/* ============================================================
+   CHAT LIST
+   ============================================================ */
+function saveChats(){
+  try{localStorage.setItem(K_CHAT,JSON.stringify(chats))}catch(e){}
+}
+function renderList(){
+  const box=document.getElementById("chat-list");
+  box.innerHTML="";
+  Object.values(chats)
+    .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0))
+    .forEach(c=>{
+      const d=document.createElement("div");
+      d.className="ci"+(c.id===activeId?" active":"");
+      d.onclick=()=>switchChat(c.id);
+      d.innerHTML=`<span class="ci-title">${esc(c.title)}</span>
+                   <span class="ci-del" onclick="delChat(event,'${c.id}')">✕</span>`;
+      box.appendChild(d);
+    });
+}
+function switchChat(id){
+  activeId=id;
+  renderList();
+  renderChat();
+  if(window.innerWidth<=700) closeSidebar();
+}
+function delChat(ev,id){
+  ev.stopPropagation();
+  if(!confirm("Hapus chat ini?"))return;
+  delete chats[id];
+  if(activeId===id){
+    const rest=Object.keys(chats);
+    if(rest.length){activeId=rest[0]} else {
+      const nid=uid();
+      chats[nid]={id:nid,title:"Chat Baru",messages:[],createdAt:Date.now()};
+      activeId=nid;
+    }
+  }
+  saveChats();
+  renderList();
+  renderChat();
+}
+function newChat(){
+  const id=uid();
+  chats[id]={id,title:"Chat Baru",messages:[],createdAt:Date.now()};
+  activeId=id;
+  saveChats();
+  renderList();
+  renderChat();
+  if(window.innerWidth<=700) closeSidebar();
+  setTimeout(()=>document.getElementById("user-input").focus(),100);
+}
+function updateTitle(){
+  const c=chats[activeId];if(!c)return;
+  const first=c.messages.find(m=>m.role==="user");
+  if(first) c.title=first.content.slice(0,40)+(first.content.length>40?"…":"");
+  saveChats();
+  renderList();
+}
+
+/* ============================================================
+   RENDER CHAT
+   ============================================================ */
+function renderChat(){
+  const area=document.getElementById("chat-area");
+  const c=chats[activeId];
+  area.innerHTML="";
+  if(!c)return;
+  c.messages.forEach(m=>area.appendChild(buildMsg(m)));
+  area.scrollTop=area.scrollHeight;
+}
+function buildMsg(m){
+  const el=document.createElement("div");
+  el.className="msg "+(m.role==="assistant"?"assistant":"user");
+
+  const body=document.createElement("div");
+  body.textContent=m.content||"";
+  el.appendChild(body);
+
+  if(m.reasoning && S.showReasoning){
+    const meta=document.createElement("div");meta.className="meta";
+    const btn=document.createElement("span");
+    btn.className="reason-toggle";btn.textContent="▶ Lihat Reasoning";
+    btn.onclick=()=>{
+      const rb=el.querySelector(".reason-body");
+      rb.classList.toggle("open");
+      btn.textContent=rb.classList.contains("open")?"▼ Sembunyikan Reasoning":"▶ Lihat Reasoning";
+    };
+    meta.appendChild(btn);
+    el.appendChild(meta);
+
+    const rb=document.createElement("div");
+    rb.className="reason-body";
+    rb.textContent=m.reasoning;
+    el.appendChild(rb);
+  }
+
+  const meta=document.createElement("div");meta.className="meta";
+  meta.textContent=new Date(m.ts||Date.now()).toLocaleTimeString()+" · "+m.role;
+  el.appendChild(meta);
+  return el;
+}
+
+/* ============================================================
+   SEND
+   ============================================================ */
+async function sendMessage(){
+  const inp=document.getElementById("user-input");
+  const text=inp.value.trim();
+  if(!text)return;
+  if(!S.apiKey){alert("Masukkan API Key dulu di Settings.");openSettings();return}
+
+  const c=chats[activeId];
+  if(!c){newChat();return}
+
+  c.messages.push({role:"user",content:text,ts:Date.now()});
+  inp.value="";autoGrow(inp);
+  updateTitle();renderChat();saveChats();
+
+  const am={role:"assistant",content:"",reasoning:"",ts:Date.now()};
+  c.messages.push(am);
+  renderChat();
+  const area=document.getElementById("chat-area");
+  area.scrollTop=area.scrollHeight;
+
+  // Build API messages
+  const msgs=[];
+  if(S.sysprompt) msgs.push({role:"system",content:S.sysprompt});
+  c.messages.slice(0,-1).forEach(m=>msgs.push({role:m.role,content:m.content}));
+
+  const payload={
+    model:S.model, messages:msgs,
+    temperature:S.temp, max_tokens:S.maxtok,
+    reasoning_effort:S.reasoning,
+    include_reasoning:S.showReasoning,
+    stream:true
+  };
+  if(S.webSearch) payload.web_search_options={};
+
+  const btn=document.getElementById("send-btn");
+  btn.disabled=true; btn.textContent="…";
+  setStatus("Menghubungi…",true);
+
+  abortCtl=new AbortController();
+
+  try{
+    const res=await fetch(API_URL,{
+      method:"POST",
+      headers:{"Authorization":"Bearer "+S.apiKey,"Content-Type":"application/json"},
+      body:JSON.stringify(payload),
+      signal:abortCtl.signal
+    });
+    if(!res.ok){
+      const t=await res.text();
+      throw new Error("HTTP "+res.status+": "+t.slice(0,250));
+    }
+
+    const reader=res.body.getReader();
+    const dec=new TextDecoder();
+    let buf="";
+    setStatus("Streaming…",true);
+
+    while(true){
+      const {done,value}=await reader.read();
+      if(done)break;
+      buf+=dec.decode(value,{stream:true});
+      const lines=buf.split("\n"); buf=lines.pop();
+      for(const line of lines){
+        const t=line.trim();
+        if(!t||!t.startsWith("data:"))continue;
+        const d=t.slice(5).trim();
+        if(d==="[DONE]")continue;
+        try{
+          const p=JSON.parse(d);
+          const delta=p.choices?.[0]?.delta;
+          if(!delta)continue;
+          if(delta.reasoning_content) am.reasoning+=delta.reasoning_content;
+          if(delta.content) am.content+=delta.content;
+
+          const els=document.querySelectorAll(".msg.assistant");
+          const last=els[els.length-1];
+          if(last){
+            const b=last.querySelector("div");
+            if(b) b.textContent=am.content;
+          }
+          area.scrollTop=area.scrollHeight;
+        }catch(e){}
+      }
+    }
+
+    renderChat();saveChats();
+    setStatus("Selesai",false);
+    setTimeout(()=>setStatus("Siap",false),1500);
+
+  }catch(err){
+    if(err.name==="AbortError"){setStatus("Dibatalkan",false)}
+    else{am.content="❌ Error: "+err.message;renderChat();setStatus("Error",false)}
+  }finally{
+    btn.disabled=false;btn.textContent="Kirim";
+    abortCtl=null;
+    area.scrollTop=area.scrollHeight;
+  }
+}
+
+/* ============================================================
+   UTIL
+   ============================================================ */
+function setStatus(t,a){
+  const s=document.getElementById("status");
+  s.textContent=t;s.classList.toggle("active",!!a);
+}
+function flashStatus(t){setStatus(t,true);setTimeout(()=>setStatus("Siap",false),1800)}
+function autoGrow(el){el.style.height="auto";el.style.height=Math.min(el.scrollHeight,120)+"px"}
+function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+document.getElementById("user-input").addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}
+});
+document.getElementById("user-input").addEventListener("input",e=>autoGrow(e.target));
+document.getElementById("settings-overlay").addEventListener("click",e=>{
+  if(e.target.id==="settings-overlay")closeSettings();
+});
+window.addEventListener("resize",()=>{
+  if(window.innerWidth>700) document.body.classList.add("sb-open");
+});
+
+init();
+</script>
+</body>
+</html>
