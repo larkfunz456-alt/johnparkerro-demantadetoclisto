@@ -3,684 +3,3167 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Abliterated Chat</title>
+
 <style>
 :root{
-  --bg:#0d0d0d; --bg2:#1a1a1a; --bg3:#252525;
-  --text:#e8e8e8; --text2:#888;
-  --accent:#00ff88; --accent2:#00cc6a;
+  --bg:#0d0d0d;
+  --bg2:#1a1a1a;
+  --bg3:#252525;
+  --text:#e8e8e8;
+  --text2:#888;
+  --accent:#00ff88;
+  --accent2:#00cc6a;
   --danger:#ff4444;
-  --user:#2a2a2a; --ai:#1a2a1a;
+  --user:#2a2a2a;
+  --ai:#1a2a1a;
   --sbw:280px;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;height:100dvh;overflow:hidden}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,
 body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  background:var(--bg); color:var(--text);
-  display:flex;
-}
-
-/* ============ SIDEBAR ============ */
-#sidebar{
-  width:var(--sbw); flex-shrink:0;
-  background:var(--bg2);
-  border-right:1px solid #333;
-  display:flex; flex-direction:column;
-  transition:transform .25s ease;
-  z-index:60;
-}
-.sb-head{
-  padding:14px 16px; border-bottom:1px solid #333;
-  display:flex; align-items:center; justify-content:space-between;
-  flex-shrink:0;
-}
-.sb-head h1{font-size:15px;color:var(--accent)}
-.sb-head button{
-  background:none;border:1px solid #444;color:var(--text);
-  width:32px;height:32px;border-radius:6px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:14px;
-}
-.sb-head button:hover{background:var(--bg3)}
-#new-chat-btn{
-  margin:12px 16px;padding:10px;
-  background:var(--accent);color:#000;border:none;
-  border-radius:8px;font-weight:700;cursor:pointer;font-size:13px;
-  flex-shrink:0;
-}
-#new-chat-btn:active{background:var(--accent2)}
-#chat-list{flex:1;overflow-y:auto;padding:4px 0}
-.ci{
-  padding:10px 16px;cursor:pointer;
-  border-left:3px solid transparent;
-  font-size:13px;color:var(--text2);
-  display:flex;align-items:center;justify-content:space-between;gap:8px;
-}
-.ci:hover{background:var(--bg3);color:var(--text)}
-.ci.active{border-left-color:var(--accent);color:var(--accent);background:var(--bg3)}
-.ci-title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.ci-del{color:#666;font-size:14px;padding:2px 6px;border-radius:4px}
-.ci-del:hover{color:var(--danger);background:rgba(255,68,68,.1)}
-
-/* ============ BACKDROP ============ */
-#backdrop{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.55);
-  z-index:55;
-  opacity:0;pointer-events:none;
-  transition:opacity .25s;
-}
-body.sb-open #backdrop{opacity:1;pointer-events:auto}
-
-/* ============ MAIN ============ */
-#main{
-  flex:1;min-width:0;
-  display:flex;flex-direction:column;
+  width:100%;
+  height:100%;
+  height:100dvh;
   overflow:hidden;
 }
 
-/* Top bar SELALU terlihat */
+body{
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+
+  background:var(--bg);
+  color:var(--text);
+
+  display:flex;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+#sidebar{
+  width:var(--sbw);
+  flex-shrink:0;
+
+  background:var(--bg2);
+  border-right:1px solid #333;
+
+  display:flex;
+  flex-direction:column;
+
+  transition:transform .25s ease, margin-left .25s ease;
+
+  z-index:60;
+}
+
+.sb-head{
+  padding:14px 16px;
+
+  border-bottom:1px solid #333;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  flex-shrink:0;
+}
+
+.sb-head h1{
+  font-size:15px;
+  color:var(--accent);
+}
+
+.sb-head button{
+  background:none;
+  border:1px solid #444;
+  color:var(--text);
+
+  width:32px;
+  height:32px;
+
+  border-radius:6px;
+
+  cursor:pointer;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:14px;
+}
+
+.sb-head button:hover{
+  background:var(--bg3);
+}
+
+#new-chat-btn{
+  margin:12px 16px;
+  padding:10px;
+
+  background:var(--accent);
+  color:#000;
+
+  border:none;
+  border-radius:8px;
+
+  font-weight:700;
+  cursor:pointer;
+  font-size:13px;
+
+  flex-shrink:0;
+}
+
+#new-chat-btn:active{
+  background:var(--accent2);
+}
+
+#chat-list{
+  flex:1;
+  overflow-y:auto;
+  padding:4px 0;
+}
+
+.ci{
+  padding:10px 16px;
+
+  cursor:pointer;
+
+  border-left:3px solid transparent;
+
+  font-size:13px;
+  color:var(--text2);
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  gap:8px;
+}
+
+.ci:hover{
+  background:var(--bg3);
+  color:var(--text);
+}
+
+.ci.active{
+  border-left-color:var(--accent);
+  color:var(--accent);
+  background:var(--bg3);
+}
+
+.ci-title{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  flex:1;
+}
+
+.ci-del{
+  color:#666;
+  font-size:14px;
+
+  padding:2px 6px;
+
+  border-radius:4px;
+}
+
+.ci-del:hover{
+  color:var(--danger);
+  background:rgba(255,68,68,.1);
+}
+
+/* ============================================================
+   BACKDROP
+   ============================================================ */
+
+#backdrop{
+  position:fixed;
+  inset:0;
+
+  background:rgba(0,0,0,.55);
+
+  z-index:55;
+
+  opacity:0;
+  pointer-events:none;
+
+  transition:opacity .25s;
+}
+
+body.sb-open #backdrop{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* ============================================================
+   MAIN
+   ============================================================ */
+
+#main{
+  flex:1;
+  min-width:0;
+
+  display:flex;
+  flex-direction:column;
+
+  overflow:hidden;
+}
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+
 #topbar{
   flex-shrink:0;
+
   height:52px;
+
   padding:0 10px;
+
   background:var(--bg2);
   border-bottom:1px solid #333;
-  display:flex;align-items:center;gap:8px;
+
+  display:flex;
+  align-items:center;
+
+  gap:8px;
+
   z-index:40;
 }
-#topbar .tb-btn{
-  background:none;border:1px solid #444;color:var(--text);
-  height:36px;padding:0 12px;border-radius:8px;cursor:pointer;
-  font-size:14px;display:flex;align-items:center;gap:6px;
+
+.tb-btn{
+  background:none;
+  border:1px solid #444;
+  color:var(--text);
+
+  height:36px;
+  padding:0 12px;
+
+  border-radius:8px;
+
+  cursor:pointer;
+
+  font-size:14px;
+
+  display:flex;
+  align-items:center;
+  gap:6px;
+
   flex-shrink:0;
 }
-#topbar .tb-btn:hover{background:var(--bg3)}
-#topbar .tb-btn.primary{
-  background:var(--accent);color:#000;border-color:var(--accent);
+
+.tb-btn:hover{
+  background:var(--bg3);
+}
+
+.tb-btn.primary{
+  background:var(--accent);
+  color:#000;
+  border-color:var(--accent);
+
   font-weight:700;
 }
-#topbar .tb-btn.primary:hover{background:var(--accent2)}
-#status{
-  font-size:11px;color:var(--text2);
-  padding:4px 8px;border-radius:10px;background:var(--bg3);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  max-width:120px;flex-shrink:1;
-}
-#status.active{background:#1a3a2a;color:var(--accent)}
-.spacer{flex:1}
 
-/* Chat area */
+.tb-btn.primary:hover{
+  background:var(--accent2);
+}
+
+#status{
+  font-size:11px;
+  color:var(--text2);
+
+  padding:4px 8px;
+
+  border-radius:10px;
+
+  background:var(--bg3);
+
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+
+  max-width:180px;
+
+  flex-shrink:1;
+}
+
+#status.active{
+  background:#1a3a2a;
+  color:var(--accent);
+}
+
+.spacer{
+  flex:1;
+}
+
+/* ============================================================
+   CHAT
+   ============================================================ */
+
 #chat-area{
-  flex:1;min-height:0;
+  flex:1;
+  min-height:0;
+
   overflow-y:auto;
+
   padding:16px;
-  display:flex;flex-direction:column;gap:10px;
+
+  display:flex;
+  flex-direction:column;
+
+  gap:10px;
+
   -webkit-overflow-scrolling:touch;
 }
+
 .msg{
   max-width:90%;
+
   padding:11px 15px;
+
   border-radius:12px;
-  font-size:14px;line-height:1.5;
-  white-space:pre-wrap;word-wrap:break-word;
+
+  font-size:14px;
+  line-height:1.5;
+
+  white-space:pre-wrap;
+  word-wrap:break-word;
+
   flex-shrink:0;
 }
-.msg.user{background:var(--user);align-self:flex-end;border-bottom-right-radius:4px}
-.msg.assistant{background:var(--ai);align-self:flex-start;border-bottom-left-radius:4px}
-.msg .meta{
-  font-size:10px;color:var(--text2);margin-top:6px;
-  display:flex;gap:8px;flex-wrap:wrap;
+
+.msg.user{
+  background:var(--user);
+
+  align-self:flex-end;
+
+  border-bottom-right-radius:4px;
 }
+
+.msg.assistant{
+  background:var(--ai);
+
+  align-self:flex-start;
+
+  border-bottom-left-radius:4px;
+}
+
+.msg.error{
+  background:#321717;
+  border-left:3px solid var(--danger);
+}
+
+.msg .meta{
+  font-size:10px;
+  color:var(--text2);
+
+  margin-top:6px;
+
+  display:flex;
+
+  gap:8px;
+
+  flex-wrap:wrap;
+}
+
 .reason-toggle{
-  cursor:pointer;color:var(--accent);font-size:11px;
+  cursor:pointer;
+  color:var(--accent);
+
+  font-size:11px;
+
   text-decoration:underline;
 }
+
 .reason-body{
-  display:none;margin-top:8px;padding:8px;
-  background:#000;border-radius:6px;
-  font-size:12px;color:#aaa;white-space:pre-wrap;
+  display:none;
+
+  margin-top:8px;
+  padding:8px;
+
+  background:#000;
+
+  border-radius:6px;
+
+  font-size:12px;
+  color:#aaa;
+
+  white-space:pre-wrap;
+
   border-left:2px solid var(--accent);
-  max-height:200px;overflow-y:auto;
-}
-.reason-body.open{display:block}
 
-/* Input area SELALU terlihat */
-#inputbar{
-  flex-shrink:0;
-  padding:10px 12px;
-  background:var(--bg2);
-  border-top:1px solid #333;
-  display:flex;gap:8px;align-items:flex-end;
-}
-#user-input{
-  flex:1;min-width:0;
-  padding:11px 14px;
-  border-radius:10px;border:1px solid #444;
-  background:var(--bg);color:var(--text);
-  font-size:14px;font-family:inherit;
-  resize:none;min-height:44px;max-height:120px;
-  line-height:1.4;
-}
-#user-input:focus{outline:none;border-color:var(--accent)}
-#send-btn{
-  padding:0 18px;height:44px;
-  border-radius:10px;border:none;
-  background:var(--accent);color:#000;
-  font-weight:700;cursor:pointer;font-size:14px;
-  flex-shrink:0;
-}
-#send-btn:disabled{opacity:.5;cursor:not-allowed}
-#send-btn:active:not(:disabled){background:var(--accent2)}
+  max-height:200px;
 
-/* ============ SETTINGS ============ */
-#settings-overlay{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,.75);z-index:200;
-  justify-content:center;align-items:center;padding:16px;
   overflow-y:auto;
 }
-#settings-overlay.open{display:flex}
+
+.reason-body.open{
+  display:block;
+}
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+
+#inputbar{
+  flex-shrink:0;
+
+  padding:10px 12px;
+
+  background:var(--bg2);
+
+  border-top:1px solid #333;
+
+  display:flex;
+
+  gap:8px;
+
+  align-items:flex-end;
+}
+
+#user-input{
+  flex:1;
+  min-width:0;
+
+  padding:11px 14px;
+
+  border-radius:10px;
+
+  border:1px solid #444;
+
+  background:var(--bg);
+  color:var(--text);
+
+  font-size:14px;
+  font-family:inherit;
+
+  resize:none;
+
+  min-height:44px;
+  max-height:120px;
+
+  line-height:1.4;
+}
+
+#user-input:focus{
+  outline:none;
+  border-color:var(--accent);
+}
+
+#send-btn{
+  padding:0 18px;
+
+  height:44px;
+
+  border-radius:10px;
+
+  border:none;
+
+  background:var(--accent);
+  color:#000;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  font-size:14px;
+
+  flex-shrink:0;
+}
+
+#send-btn:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+#send-btn.cancel{
+  background:var(--danger);
+  color:white;
+}
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+
+#settings-overlay{
+  display:none;
+
+  position:fixed;
+
+  inset:0;
+
+  background:rgba(0,0,0,.75);
+
+  z-index:200;
+
+  justify-content:center;
+  align-items:center;
+
+  padding:16px;
+
+  overflow-y:auto;
+}
+
+#settings-overlay.open{
+  display:flex;
+}
+
 #settings-panel{
-  background:var(--bg2);border:1px solid #444;
-  border-radius:12px;width:100%;max-width:520px;
-  max-height:90vh;overflow-y:auto;padding:20px;
+  background:var(--bg2);
+
+  border:1px solid #444;
+
+  border-radius:12px;
+
+  width:100%;
+
+  max-width:520px;
+
+  max-height:90vh;
+
+  overflow-y:auto;
+
+  padding:20px;
 }
-#settings-panel h2{color:var(--accent);margin-bottom:16px;font-size:17px}
-.sg{margin-bottom:14px}
+
+#settings-panel h2{
+  color:var(--accent);
+
+  margin-bottom:16px;
+
+  font-size:17px;
+}
+
+.sg{
+  margin-bottom:14px;
+}
+
 .sg label{
-  display:block;font-size:12px;color:var(--text2);
-  margin-bottom:6px;font-weight:600;
+  display:block;
+
+  font-size:12px;
+
+  color:var(--text2);
+
+  margin-bottom:6px;
+
+  font-weight:600;
 }
-.sg input[type=text],.sg input[type=password],.sg textarea,.sg select{
-  width:100%;padding:10px;border-radius:8px;
-  border:1px solid #444;background:var(--bg);
-  color:var(--text);font-size:13px;font-family:inherit;
+
+.sg input[type=text],
+.sg input[type=password],
+.sg textarea,
+.sg select{
+  width:100%;
+
+  padding:10px;
+
+  border-radius:8px;
+
+  border:1px solid #444;
+
+  background:var(--bg);
+
+  color:var(--text);
+
+  font-size:13px;
+
+  font-family:inherit;
 }
-.sg textarea{min-height:70px;resize:vertical}
-.sg input:focus,.sg textarea:focus,.sg select:focus{
-  outline:none;border-color:var(--accent);
+
+.sg textarea{
+  min-height:70px;
+
+  resize:vertical;
 }
-.row{display:flex;gap:10px}
-.row>*{flex:1}
+
+.sg input:focus,
+.sg textarea:focus,
+.sg select:focus{
+  outline:none;
+  border-color:var(--accent);
+}
+
+.row{
+  display:flex;
+
+  gap:10px;
+}
+
+.row>*{
+  flex:1;
+}
+
 .trow{
-  display:flex;align-items:center;justify-content:space-between;
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
   padding:8px 0;
 }
-.trow span{font-size:13px}
-.tsw{
-  position:relative;width:44px;height:24px;
-  background:#444;border-radius:12px;cursor:pointer;
-  transition:background .2s;flex-shrink:0;
+
+.trow span{
+  font-size:13px;
 }
-.tsw.on{background:var(--accent)}
+
+.tsw{
+  position:relative;
+
+  width:44px;
+  height:24px;
+
+  background:#444;
+
+  border-radius:12px;
+
+  cursor:pointer;
+
+  transition:background .2s;
+
+  flex-shrink:0;
+}
+
+.tsw.on{
+  background:var(--accent);
+}
+
 .tsw::after{
-  content:'';position:absolute;top:2px;left:2px;
-  width:20px;height:20px;background:#fff;border-radius:50%;
+  content:"";
+
+  position:absolute;
+
+  top:2px;
+  left:2px;
+
+  width:20px;
+  height:20px;
+
+  background:#fff;
+
+  border-radius:50%;
+
   transition:left .2s;
 }
-.tsw.on::after{left:22px}
-#settings-actions{display:flex;gap:10px;margin-top:18px}
-#settings-actions button{
-  flex:1;padding:12px;border-radius:8px;border:none;
-  font-weight:700;cursor:pointer;font-size:14px;
+
+.tsw.on::after{
+  left:22px;
 }
-#save-settings{background:var(--accent);color:#000}
-#close-settings{background:var(--bg3);color:var(--text)}
-.hint{font-size:11px;color:var(--text2);margin-top:4px;display:block}
 
-/* Scrollbar */
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#444;border-radius:3px}
+#settings-actions{
+  display:flex;
 
-/* ============ MOBILE ============ */
-@media (max-width:700px){
+  gap:10px;
+
+  margin-top:18px;
+}
+
+#settings-actions button{
+  flex:1;
+
+  padding:12px;
+
+  border-radius:8px;
+
+  border:none;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  font-size:14px;
+}
+
+#save-settings{
+  background:var(--accent);
+  color:#000;
+}
+
+#close-settings{
+  background:var(--bg3);
+  color:var(--text);
+}
+
+.hint{
+  font-size:11px;
+
+  color:var(--text2);
+
+  margin-top:4px;
+
+  display:block;
+}
+
+#api-test-result{
+  margin-top:8px;
+
+  font-size:11px;
+
+  color:var(--text2);
+
+  white-space:pre-wrap;
+
+  word-break:break-word;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+
+::-webkit-scrollbar{
+  width:6px;
+  height:6px;
+}
+
+::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+::-webkit-scrollbar-thumb{
+  background:#444;
+  border-radius:3px;
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media(max-width:700px){
+
   #sidebar{
-    position:fixed;top:0;left:0;bottom:0;
+    position:fixed;
+
+    top:0;
+    left:0;
+    bottom:0;
+
     transform:translateX(-100%);
+
     box-shadow:4px 0 20px rgba(0,0,0,.5);
   }
-  body.sb-open #sidebar{transform:translateX(0)}
-  #status{display:none}
+
+  body.sb-open #sidebar{
+    transform:translateX(0);
+  }
+
+  #status{
+    display:none;
+  }
+
+  #chat-area{
+    padding:12px;
+  }
+
+  .msg{
+    max-width:94%;
+  }
+
+  #inputbar{
+    padding:
+      8px
+      max(8px, env(safe-area-inset-left))
+      calc(8px + env(safe-area-inset-right))
+      8px;
+  }
 }
-@media (min-width:701px){
+
+@media(min-width:701px){
+
   body:not(.sb-open) #sidebar{
     margin-left:calc(var(--sbw) * -1);
   }
 }
 </style>
 </head>
+
 <body>
 
 <div id="backdrop" onclick="closeSidebar()"></div>
 
-<!-- ============ SIDEBAR ============ -->
+<!-- ============================================================
+     SIDEBAR
+     ============================================================ -->
+
 <aside id="sidebar">
+
   <div class="sb-head">
     <h1>⚡ Abliterated</h1>
-    <button onclick="closeSidebar()" title="Tutup">✕</button>
+
+    <button
+      onclick="closeSidebar()"
+      title="Tutup">
+      ✕
+    </button>
   </div>
-  <button id="new-chat-btn" onclick="newChat()">+ Chat Baru</button>
+
+  <button
+    id="new-chat-btn"
+    onclick="newChat()">
+    + Chat Baru
+  </button>
+
   <div id="chat-list"></div>
+
 </aside>
 
-<!-- ============ MAIN ============ -->
+<!-- ============================================================
+     MAIN
+     ============================================================ -->
+
 <main id="main">
+
   <div id="topbar">
-    <button class="tb-btn" onclick="toggleSidebar()" title="Menu">☰</button>
-    <span id="status">Siap</span>
+
+    <button
+      class="tb-btn"
+      onclick="toggleSidebar()"
+      title="Menu">
+      ☰
+    </button>
+
+    <span id="status">
+      Siap
+    </span>
+
     <div class="spacer"></div>
-    <button class="tb-btn primary" onclick="openSettings()" title="Settings">⚙️ Settings</button>
+
+    <button
+      class="tb-btn primary"
+      onclick="openSettings()">
+      ⚙️ Settings
+    </button>
+
   </div>
 
   <div id="chat-area"></div>
 
   <div id="inputbar">
-    <textarea id="user-input" placeholder="Ketik pesan..." rows="1"></textarea>
-    <button id="send-btn" onclick="sendMessage()">Kirim</button>
+
+    <textarea
+      id="user-input"
+      placeholder="Ketik pesan..."
+      rows="1"></textarea>
+
+    <button
+      id="send-btn"
+      onclick="handleSendButton()">
+      Kirim
+    </button>
+
   </div>
+
 </main>
 
-<!-- ============ SETTINGS MODAL ============ -->
+<!-- ============================================================
+     SETTINGS
+     ============================================================ -->
+
 <div id="settings-overlay">
+
   <div id="settings-panel">
+
     <h2>⚙️ Pengaturan</h2>
 
     <div class="sg">
-      <label>API Key (abliteration.ai)</label>
-      <input type="password" id="set-api-key" placeholder="ak-...">
+
+      <label>API Key</label>
+
+      <input
+        type="password"
+        id="set-api-key"
+        placeholder="Masukkan API key...">
+
+      <span class="hint">
+        Disimpan hanya di localStorage browser ini.
+      </span>
+
     </div>
 
     <div class="sg">
+
       <label>Model</label>
+
       <select id="set-model">
-        <option value="abliterated-model-large-v2">abliterated-model-large-v2</option>
-        <option value="abliterated-model">abliterated-model</option>
-        <option value="abliterated-model-large">abliterated-model-large</option>
+
+        <option value="abliterated-model-large-v2">
+          abliterated-model-large-v2
+        </option>
+
+        <option value="abliterated-model-large">
+          abliterated-model-large
+        </option>
+
+        <option value="abliterated-model">
+          abliterated-model
+        </option>
+
       </select>
+
     </div>
 
     <div class="sg">
+
       <label>System Prompt</label>
-      <textarea id="set-sysprompt" placeholder="You are a helpful cybersecurity assistant for authorized security research and education."></textarea>
+
+      <textarea
+        id="set-sysprompt"
+        placeholder="You are a helpful assistant."></textarea>
+
     </div>
 
     <div class="sg">
-      <label>Thinking Level</label>
-      <select id="set-reasoning">
-        <option value="low">Low</option>
-        <option value="high">High</option>
-        <option value="max" selected>Max</option>
-      </select>
-      <span class="hint">Model large-v2 mendukung low, high, dan max.</span>
+
+      <label>Temperature</label>
+
+      <input
+        type="text"
+        id="set-temp"
+        value="0.75">
+
+      <span class="hint">
+        Nilai normal: 0–2. Jika model/provider menolak nilai tertentu,
+        gunakan 0.7.
+      </span>
+
     </div>
 
     <div class="sg">
+
+      <label>Max Tokens</label>
+
+      <input
+        type="text"
+        id="set-maxtok"
+        value="8192">
+
+      <span class="hint">
+        Default dibuat 8192 agar lebih kompatibel.
+      </span>
+
+    </div>
+
+    <div class="sg">
+
       <div class="trow">
+
+        <span>🌊 Streaming</span>
+
+        <div
+          class="tsw on"
+          id="t-stream"
+          onclick="toggleSw('stream')">
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="sg">
+
+      <div class="trow">
+
+        <span>🧠 Reasoning display</span>
+
+        <div
+          class="tsw on"
+          id="t-reasoning"
+          onclick="toggleSw('reasoning')">
+        </div>
+
+      </div>
+
+      <span class="hint">
+        Hanya menampilkan reasoning jika API benar-benar mengirimkannya.
+      </span>
+
+    </div>
+
+    <div class="sg">
+
+      <div class="trow">
+
         <span>🌐 Web Search</span>
-        <div class="tsw" id="t-websearch" onclick="toggleSw('websearch')"></div>
+
+        <div
+          class="tsw"
+          id="t-websearch"
+          onclick="toggleSw('websearch')">
+        </div>
+
       </div>
+
+      <span class="hint">
+        Fitur ini hanya dikirim jika diaktifkan.
+      </span>
+
     </div>
 
     <div class="sg">
-      <div class="trow">
-        <span>🧠 Tampilkan Reasoning</span>
-        <div class="tsw on" id="t-reasoning" onclick="toggleSw('reasoning')"></div>
-      </div>
-    </div>
 
-    <div class="sg">
-      <div class="row">
-        <div>
-          <label>Temperature</label>
-          <input type="text" id="set-temp" value="0.75">
-        </div>
-        <div>
-          <label>Max Tokens</label>
-          <input type="text" id="set-maxtok" value="32768">
-        </div>
-      </div>
+      <button
+        class="tb-btn"
+        style="width:100%;justify-content:center"
+        onclick="testConnection()">
+        🔌 Test API
+      </button>
+
+      <div id="api-test-result"></div>
+
     </div>
 
     <div id="settings-actions">
-      <button id="close-settings" onclick="closeSettings()">Tutup</button>
-      <button id="save-settings" onclick="saveSettings()">Simpan</button>
+
+      <button
+        id="close-settings"
+        onclick="closeSettings()">
+        Tutup
+      </button>
+
+      <button
+        id="save-settings"
+        onclick="saveSettings()">
+        Simpan
+      </button>
+
     </div>
+
   </div>
+
 </div>
 
 <script>
+"use strict";
+
 /* ============================================================
-   STATE
+   CONFIG
    ============================================================ */
-const API_URL = "https://api.allorigins.win/raw?url=https://api.abliteration.ai/v1/chat/completions";
-const K_SET = "ablit_set_v2";
-const K_CHAT = "ablit_chat_v2";
+
+const API_URL =
+  "https://api.abliteration.ai/v1/chat/completions";
+
+const K_SET =
+  "ablit_set_v3";
+
+const K_CHAT =
+  "ablit_chat_v3";
+
+/* ============================================================
+   DEFAULT STATE
+   ============================================================ */
+
+const DEFAULT_SETTINGS = {
+
+  apiKey:"",
+
+  model:"abliterated-model-large-v2",
+
+  sysprompt:
+    "You are a helpful assistant.",
+
+  stream:true,
+
+  webSearch:false,
+
+  showReasoning:true,
+
+  temp:0.75,
+
+  maxtok:8192
+};
 
 let S = {
-  apiKey:"", model:"abliterated-model-large-v2",
-  sysprompt:"You are a helpful cybersecurity assistant for authorized security research and education.",
-  reasoning:"max", webSearch:false, showReasoning:true,
-  temp:0.75, maxtok:32768
+  ...DEFAULT_SETTINGS
 };
+
 let chats = {};
+
 let activeId = null;
+
 let abortCtl = null;
+
 
 /* ============================================================
    INIT
    ============================================================ */
-function init(){
-  // load settings
-  try{const r=localStorage.getItem(K_SET);if(r)S={...S,...JSON.parse(r)}}catch(e){}
-  // load chats
-  try{const r=localStorage.getItem(K_CHAT);if(r)chats=JSON.parse(r)}catch(e){}
 
-  if(Object.keys(chats).length===0){
-    const id=uid();
-    chats[id]={id,title:"Chat Baru",messages:[],createdAt:Date.now()};
-    activeId=id;
-  } else {
-    const ids=Object.keys(chats).sort((a,b)=>(chats[b].createdAt||0)-(chats[a].createdAt||0));
-    activeId=ids[0];
+function init(){
+
+  loadSettings();
+
+  loadChats();
+
+  if(Object.keys(chats).length === 0){
+
+    const id = uid();
+
+    chats[id] = {
+      id,
+      title:"Chat Baru",
+      messages:[],
+      createdAt:Date.now()
+    };
+
+    activeId = id;
+
+  }else{
+
+    const ids =
+      Object.keys(chats)
+        .sort(
+          (a,b)=>
+            (chats[b].createdAt || 0) -
+            (chats[a].createdAt || 0)
+        );
+
+    activeId = ids[0];
   }
 
   applySettingsUI();
+
   renderList();
+
   renderChat();
+
+  if(window.innerWidth <= 700){
+
+    document.body.classList.remove("sb-open");
+
+  }else{
+
+    document.body.classList.add("sb-open");
+
+  }
+
   saveChats();
 
-  // Mobile: pastikan sidebar tertutup saat pertama load
-  if(window.innerWidth<=700){
-    document.body.classList.remove("sb-open");
-  } else {
-    document.body.classList.add("sb-open");
+}
+
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+
+function loadSettings(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(K_SET);
+
+    if(raw){
+
+      const saved =
+        JSON.parse(raw);
+
+      S = {
+        ...DEFAULT_SETTINGS,
+        ...saved
+      };
+
+    }
+
+  }catch(err){
+
+    console.error(
+      "Gagal membaca settings:",
+      err
+    );
+
+    S = {
+      ...DEFAULT_SETTINGS
+    };
+
   }
 }
-function uid(){return "c_"+Date.now()+"_"+Math.random().toString(36).slice(2,6)}
+
+
+function saveSettingsStorage(){
+
+  try{
+
+    localStorage.setItem(
+      K_SET,
+      JSON.stringify(S)
+    );
+
+  }catch(err){
+
+    console.error(
+      "Gagal menyimpan settings:",
+      err
+    );
+
+  }
+}
+
+
+function loadChats(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(K_CHAT);
+
+    if(raw){
+
+      const parsed =
+        JSON.parse(raw);
+
+      if(
+        parsed &&
+        typeof parsed === "object"
+      ){
+
+        chats = parsed;
+
+      }
+
+    }
+
+  }catch(err){
+
+    console.error(
+      "Gagal membaca chat:",
+      err
+    );
+
+    chats = {};
+
+  }
+}
+
+
+function saveChats(){
+
+  try{
+
+    localStorage.setItem(
+      K_CHAT,
+      JSON.stringify(chats)
+    );
+
+  }catch(err){
+
+    console.error(
+      "Gagal menyimpan chat:",
+      err
+    );
+
+  }
+}
+
+
+/* ============================================================
+   ID
+   ============================================================ */
+
+function uid(){
+
+  return (
+    "c_" +
+    Date.now() +
+    "_" +
+    Math.random()
+      .toString(36)
+      .slice(2,8)
+  );
+
+}
+
 
 /* ============================================================
    SIDEBAR
    ============================================================ */
+
 function toggleSidebar(){
-  document.body.classList.toggle("sb-open");
+
+  document.body.classList.toggle(
+    "sb-open"
+  );
+
 }
+
+
 function closeSidebar(){
-  if(window.innerWidth<=700) document.body.classList.remove("sb-open");
+
+  if(window.innerWidth <= 700){
+
+    document.body.classList.remove(
+      "sb-open"
+    );
+
+  }
+
 }
+
+
 function openSidebar(){
-  document.body.classList.add("sb-open");
+
+  document.body.classList.add(
+    "sb-open"
+  );
+
 }
+
 
 /* ============================================================
    SETTINGS
    ============================================================ */
+
 function applySettingsUI(){
-  document.getElementById("set-api-key").value=S.apiKey;
-  document.getElementById("set-model").value=S.model;
-  document.getElementById("set-sysprompt").value=S.sysprompt;
-  document.getElementById("set-reasoning").value=S.reasoning;
-  document.getElementById("set-temp").value=S.temp;
-  document.getElementById("set-maxtok").value=S.maxtok;
-  document.getElementById("t-websearch").classList.toggle("on",S.webSearch);
-  document.getElementById("t-reasoning").classList.toggle("on",S.showReasoning);
+
+  document.getElementById(
+    "set-api-key"
+  ).value =
+    S.apiKey || "";
+
+  document.getElementById(
+    "set-model"
+  ).value =
+    S.model || DEFAULT_SETTINGS.model;
+
+  document.getElementById(
+    "set-sysprompt"
+  ).value =
+    S.sysprompt || "";
+
+  document.getElementById(
+    "set-temp"
+  ).value =
+    S.temp;
+
+  document.getElementById(
+    "set-maxtok"
+  ).value =
+    S.maxtok;
+
+  document.getElementById(
+    "t-stream"
+  ).classList.toggle(
+    "on",
+    !!S.stream
+  );
+
+  document.getElementById(
+    "t-websearch"
+  ).classList.toggle(
+    "on",
+    !!S.webSearch
+  );
+
+  document.getElementById(
+    "t-reasoning"
+  ).classList.toggle(
+    "on",
+    !!S.showReasoning
+  );
+
 }
+
+
 function openSettings(){
+
   applySettingsUI();
-  document.getElementById("settings-overlay").classList.add("open");
+
+  document.getElementById(
+    "api-test-result"
+  ).textContent = "";
+
+  document.getElementById(
+    "settings-overlay"
+  ).classList.add("open");
+
 }
+
+
 function closeSettings(){
-  document.getElementById("settings-overlay").classList.remove("open");
+
+  document.getElementById(
+    "settings-overlay"
+  ).classList.remove("open");
+
 }
+
+
 function saveSettings(){
-  S.apiKey=document.getElementById("set-api-key").value.trim();
-  S.model=document.getElementById("set-model").value;
-  S.sysprompt=document.getElementById("set-sysprompt").value;
-  S.reasoning=document.getElementById("set-reasoning").value;
-  S.temp=parseFloat(document.getElementById("set-temp").value)||0.75;
-  S.maxtok=parseInt(document.getElementById("set-maxtok").value)||32768;
-  try{localStorage.setItem(K_SET,JSON.stringify(S))}catch(e){}
+
+  const key =
+    document.getElementById(
+      "set-api-key"
+    ).value.trim();
+
+  const model =
+    document.getElementById(
+      "set-model"
+    ).value.trim();
+
+  const sysprompt =
+    document.getElementById(
+      "set-sysprompt"
+    ).value;
+
+  let temp =
+    parseFloat(
+      document.getElementById(
+        "set-temp"
+      ).value
+    );
+
+  let maxtok =
+    parseInt(
+      document.getElementById(
+        "set-maxtok"
+      ).value,
+      10
+    );
+
+  if(!model){
+
+    alert("Model ID tidak boleh kosong.");
+
+    return;
+
+  }
+
+  if(!Number.isFinite(temp)){
+
+    temp = 0.75;
+
+  }
+
+  temp =
+    Math.max(
+      0,
+      Math.min(2,temp)
+    );
+
+  if(
+    !Number.isFinite(maxtok) ||
+    maxtok < 1
+  ){
+
+    maxtok = 8192;
+
+  }
+
+  S.apiKey = key;
+
+  S.model = model;
+
+  S.sysprompt = sysprompt;
+
+  S.temp = temp;
+
+  S.maxtok = maxtok;
+
+  saveSettingsStorage();
+
   closeSettings();
-  flashStatus("Settings disimpan");
+
+  flashStatus(
+    "Settings disimpan"
+  );
+
 }
-function toggleSw(k){
-  if(k==="websearch"){S.webSearch=!S.webSearch;document.getElementById("t-websearch").classList.toggle("on",S.webSearch)}
-  if(k==="reasoning"){S.showReasoning=!S.showReasoning;document.getElementById("t-reasoning").classList.toggle("on",S.showReasoning)}
-  try{localStorage.setItem(K_SET,JSON.stringify(S))}catch(e){}
+
+
+function toggleSw(key){
+
+  if(key === "stream"){
+
+    S.stream = !S.stream;
+
+  }
+
+  if(key === "websearch"){
+
+    S.webSearch = !S.webSearch;
+
+  }
+
+  if(key === "reasoning"){
+
+    S.showReasoning =
+      !S.showReasoning;
+
+  }
+
+  saveSettingsStorage();
+
+  applySettingsUI();
+
   renderChat();
+
 }
+
 
 /* ============================================================
    CHAT LIST
    ============================================================ */
-function saveChats(){
-  try{localStorage.setItem(K_CHAT,JSON.stringify(chats))}catch(e){}
-}
+
 function renderList(){
-  const box=document.getElementById("chat-list");
-  box.innerHTML="";
+
+  const box =
+    document.getElementById(
+      "chat-list"
+    );
+
+  box.innerHTML = "";
+
   Object.values(chats)
-    .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0))
+    .sort(
+      (a,b)=>
+        (b.createdAt || 0) -
+        (a.createdAt || 0)
+    )
     .forEach(c=>{
-      const d=document.createElement("div");
-      d.className="ci"+(c.id===activeId?" active":"");
-      d.onclick=()=>switchChat(c.id);
-      d.innerHTML=`<span class="ci-title">${esc(c.title)}</span>
-                   <span class="ci-del" onclick="delChat(event,'${c.id}')">✕</span>`;
+
+      const d =
+        document.createElement(
+          "div"
+        );
+
+      d.className =
+        "ci" +
+        (
+          c.id === activeId
+            ? " active"
+            : ""
+        );
+
+      d.onclick =
+        ()=>switchChat(c.id);
+
+      const title =
+        document.createElement(
+          "span"
+        );
+
+      title.className =
+        "ci-title";
+
+      title.textContent =
+        c.title || "Chat Baru";
+
+      const del =
+        document.createElement(
+          "span"
+        );
+
+      del.className =
+        "ci-del";
+
+      del.textContent =
+        "✕";
+
+      del.title =
+        "Hapus chat";
+
+      del.onclick =
+        ev =>
+          delChat(
+            ev,
+            c.id
+          );
+
+      d.appendChild(title);
+
+      d.appendChild(del);
+
       box.appendChild(d);
+
     });
+
 }
+
+
 function switchChat(id){
-  activeId=id;
+
+  if(!chats[id]) return;
+
+  activeId = id;
+
   renderList();
+
   renderChat();
-  if(window.innerWidth<=700) closeSidebar();
-}
-function delChat(ev,id){
-  ev.stopPropagation();
-  if(!confirm("Hapus chat ini?"))return;
-  delete chats[id];
-  if(activeId===id){
-    const rest=Object.keys(chats);
-    if(rest.length){activeId=rest[0]} else {
-      const nid=uid();
-      chats[nid]={id:nid,title:"Chat Baru",messages:[],createdAt:Date.now()};
-      activeId=nid;
-    }
+
+  if(window.innerWidth <= 700){
+
+    closeSidebar();
+
   }
-  saveChats();
-  renderList();
-  renderChat();
+
 }
+
+
+function delChat(ev,id){
+
+  ev.stopPropagation();
+
+  if(
+    !confirm(
+      "Hapus chat ini?"
+    )
+  ){
+
+    return;
+
+  }
+
+  delete chats[id];
+
+  if(activeId === id){
+
+    const rest =
+      Object.keys(chats);
+
+    if(rest.length){
+
+      activeId =
+        rest[0];
+
+    }else{
+
+      const nid =
+        uid();
+
+      chats[nid] = {
+        id:nid,
+        title:"Chat Baru",
+        messages:[],
+        createdAt:Date.now()
+      };
+
+      activeId = nid;
+
+    }
+
+  }
+
+  saveChats();
+
+  renderList();
+
+  renderChat();
+
+}
+
+
 function newChat(){
-  const id=uid();
-  chats[id]={id,title:"Chat Baru",messages:[],createdAt:Date.now()};
-  activeId=id;
+
+  const id =
+    uid();
+
+  chats[id] = {
+    id,
+    title:"Chat Baru",
+    messages:[],
+    createdAt:Date.now()
+  };
+
+  activeId = id;
+
   saveChats();
+
   renderList();
+
   renderChat();
-  if(window.innerWidth<=700) closeSidebar();
-  setTimeout(()=>document.getElementById("user-input").focus(),100);
+
+  if(window.innerWidth <= 700){
+
+    closeSidebar();
+
+  }
+
+  setTimeout(
+    ()=>{
+      document
+        .getElementById(
+          "user-input"
+        )
+        .focus();
+    },
+    100
+  );
+
 }
+
+
 function updateTitle(){
-  const c=chats[activeId];if(!c)return;
-  const first=c.messages.find(m=>m.role==="user");
-  if(first) c.title=first.content.slice(0,40)+(first.content.length>40?"…":"");
+
+  const c =
+    chats[activeId];
+
+  if(!c) return;
+
+  const first =
+    c.messages.find(
+      m =>
+        m.role === "user"
+    );
+
+  if(first){
+
+    const title =
+      String(
+        first.content || ""
+      ).trim();
+
+    c.title =
+      title.slice(0,40) +
+      (
+        title.length > 40
+          ? "…"
+          : ""
+      );
+
+  }
+
   saveChats();
+
   renderList();
+
 }
+
 
 /* ============================================================
-   RENDER CHAT
+   MESSAGE RENDERING
    ============================================================ */
-function renderChat(){
-  const area=document.getElementById("chat-area");
-  const c=chats[activeId];
-  area.innerHTML="";
-  if(!c)return;
-  c.messages.forEach(m=>area.appendChild(buildMsg(m)));
-  area.scrollTop=area.scrollHeight;
-}
-function buildMsg(m){
-  const el=document.createElement("div");
-  el.className="msg "+(m.role==="assistant"?"assistant":"user");
 
-  const body=document.createElement("div");
-  body.textContent=m.content||"";
+function renderChat(){
+
+  const area =
+    document.getElementById(
+      "chat-area"
+    );
+
+  const c =
+    chats[activeId];
+
+  area.innerHTML = "";
+
+  if(!c) return;
+
+  for(const m of c.messages){
+
+    area.appendChild(
+      buildMsg(m)
+    );
+
+  }
+
+  requestAnimationFrame(
+    ()=>{
+      area.scrollTop =
+        area.scrollHeight;
+    }
+  );
+
+}
+
+
+function buildMsg(m){
+
+  const el =
+    document.createElement(
+      "div"
+    );
+
+  const role =
+    m.role === "assistant"
+      ? "assistant"
+      : "user";
+
+  el.className =
+    "msg " +
+    role +
+    (
+      m.error
+        ? " error"
+        : ""
+    );
+
+  const body =
+    document.createElement(
+      "div"
+    );
+
+  body.textContent =
+    m.content || "";
+
   el.appendChild(body);
 
-  if(m.reasoning && S.showReasoning){
-    const meta=document.createElement("div");meta.className="meta";
-    const btn=document.createElement("span");
-    btn.className="reason-toggle";btn.textContent="▶ Lihat Reasoning";
-    btn.onclick=()=>{
-      const rb=el.querySelector(".reason-body");
-      rb.classList.toggle("open");
-      btn.textContent=rb.classList.contains("open")?"▼ Sembunyikan Reasoning":"▶ Lihat Reasoning";
+  if(
+    m.reasoning &&
+    S.showReasoning
+  ){
+
+    const meta =
+      document.createElement(
+        "div"
+      );
+
+    meta.className =
+      "meta";
+
+    const btn =
+      document.createElement(
+        "span"
+      );
+
+    btn.className =
+      "reason-toggle";
+
+    btn.textContent =
+      "▶ Lihat Reasoning";
+
+    const rb =
+      document.createElement(
+        "div"
+      );
+
+    rb.className =
+      "reason-body";
+
+    rb.textContent =
+      m.reasoning;
+
+    btn.onclick = ()=>{
+
+      rb.classList.toggle(
+        "open"
+      );
+
+      btn.textContent =
+        rb.classList.contains("open")
+          ? "▼ Sembunyikan Reasoning"
+          : "▶ Lihat Reasoning";
+
     };
+
     meta.appendChild(btn);
+
     el.appendChild(meta);
 
-    const rb=document.createElement("div");
-    rb.className="reason-body";
-    rb.textContent=m.reasoning;
     el.appendChild(rb);
+
   }
 
-  const meta=document.createElement("div");meta.className="meta";
-  meta.textContent=new Date(m.ts||Date.now()).toLocaleTimeString()+" · "+m.role;
+  const meta =
+    document.createElement(
+      "div"
+    );
+
+  meta.className =
+    "meta";
+
+  const date =
+    new Date(
+      m.ts || Date.now()
+    );
+
+  meta.textContent =
+    date.toLocaleTimeString() +
+    " · " +
+    role;
+
   el.appendChild(meta);
+
   return el;
+
 }
 
+
 /* ============================================================
-   SEND
+   BUILD API MESSAGES
    ============================================================ */
+
+function buildApiMessages(){
+
+  const c =
+    chats[activeId];
+
+  const messages = [];
+
+  if(
+    S.sysprompt &&
+    S.sysprompt.trim()
+  ){
+
+    messages.push({
+      role:"system",
+      content:S.sysprompt
+    });
+
+  }
+
+  if(!c) return messages;
+
+  for(const m of c.messages){
+
+    if(
+      (m.role === "user" ||
+       m.role === "assistant") &&
+      typeof m.content === "string" &&
+      m.content.trim()
+    ){
+
+      messages.push({
+        role:m.role,
+        content:m.content
+      });
+
+    }
+
+  }
+
+  return messages;
+
+}
+
+
+/* ============================================================
+   SEND BUTTON
+   ============================================================ */
+
+function handleSendButton(){
+
+  if(abortCtl){
+
+    abortCtl.abort();
+
+    return;
+
+  }
+
+  sendMessage();
+
+}
+
+
+/* ============================================================
+   SEND MESSAGE
+   ============================================================ */
+
 async function sendMessage(){
-  const inp=document.getElementById("user-input");
-  const text=inp.value.trim();
-  if(!text)return;
-  if(!S.apiKey){alert("Masukkan API Key dulu di Settings.");openSettings();return}
 
-  const c=chats[activeId];
-  if(!c){newChat();return}
+  const inp =
+    document.getElementById(
+      "user-input"
+    );
 
-  c.messages.push({role:"user",content:text,ts:Date.now()});
-  inp.value="";autoGrow(inp);
-  updateTitle();renderChat();saveChats();
+  const text =
+    inp.value.trim();
 
-  const am={role:"assistant",content:"",reasoning:"",ts:Date.now()};
-  c.messages.push(am);
-  renderChat();
-  const area=document.getElementById("chat-area");
-  area.scrollTop=area.scrollHeight;
+  if(!text) return;
 
-  // Build API messages
-  const msgs=[];
-  if(S.sysprompt) msgs.push({role:"system",content:S.sysprompt});
-  c.messages.slice(0,-1).forEach(m=>msgs.push({role:m.role,content:m.content}));
+  if(!S.apiKey){
 
-  const payload={
-    model:S.model, messages:msgs,
-    temperature:S.temp, max_tokens:S.maxtok,
-    reasoning_effort:S.reasoning,
-    include_reasoning:S.showReasoning,
-    stream:true
+    alert(
+      "Masukkan API Key dulu di Settings."
+    );
+
+    openSettings();
+
+    return;
+
+  }
+
+  const c =
+    chats[activeId];
+
+  if(!c) return;
+
+  /* User message */
+
+  c.messages.push({
+    role:"user",
+    content:text,
+    ts:Date.now()
+  });
+
+  inp.value = "";
+
+  autoGrow(inp);
+
+  updateTitle();
+
+  /* Assistant placeholder */
+
+  const am = {
+    role:"assistant",
+    content:"",
+    reasoning:"",
+    ts:Date.now()
   };
-  if(S.webSearch) payload.web_search_options={};
 
-  const btn=document.getElementById("send-btn");
-  btn.disabled=true; btn.textContent="…";
-  setStatus("Menghubungi…",true);
+  c.messages.push(am);
 
-  abortCtl=new AbortController();
+  renderChat();
+
+  saveChats();
+
+  /* UI */
+
+  const btn =
+    document.getElementById(
+      "send-btn"
+    );
+
+  btn.disabled = false;
+
+  btn.classList.add("cancel");
+
+  btn.textContent =
+    "Batal";
+
+  setStatus(
+    "Menghubungi API…",
+    true
+  );
+
+  abortCtl =
+    new AbortController();
 
   try{
-    const res=await fetch(API_URL,{
-      method:"POST",
-      headers:{"Authorization":"Bearer "+S.apiKey,"Content-Type":"application/json"},
-      body:JSON.stringify(payload),
-      signal:abortCtl.signal
-    });
-    if(!res.ok){
-      const t=await res.text();
-      throw new Error("HTTP "+res.status+": "+t.slice(0,250));
+
+    const messages =
+      buildApiMessages();
+
+    if(
+      messages.length === 0
+    ){
+
+      throw new Error(
+        "Tidak ada message yang dapat dikirim."
+      );
+
     }
 
-    const reader=res.body.getReader();
-    const dec=new TextDecoder();
-    let buf="";
-    setStatus("Streaming…",true);
+    const payload = {
 
-    while(true){
-      const {done,value}=await reader.read();
-      if(done)break;
-      buf+=dec.decode(value,{stream:true});
-      const lines=buf.split("\n"); buf=lines.pop();
-      for(const line of lines){
-        const t=line.trim();
-        if(!t||!t.startsWith("data:"))continue;
-        const d=t.slice(5).trim();
-        if(d==="[DONE]")continue;
-        try{
-          const p=JSON.parse(d);
-          const delta=p.choices?.[0]?.delta;
-          if(!delta)continue;
-          if(delta.reasoning_content) am.reasoning+=delta.reasoning_content;
-          if(delta.content) am.content+=delta.content;
+      model:S.model,
 
-          const els=document.querySelectorAll(".msg.assistant");
-          const last=els[els.length-1];
-          if(last){
-            const b=last.querySelector("div");
-            if(b) b.textContent=am.content;
-          }
-          area.scrollTop=area.scrollHeight;
-        }catch(e){}
+      messages:messages,
+
+      temperature:S.temp,
+
+      max_tokens:S.maxtok,
+
+      stream:!!S.stream
+
+    };
+
+    /*
+      Web search sengaja TIDAK dimasukkan
+      ke request standar.
+
+      Alasannya:
+      format tool/provider-specific harus
+      benar-benar didukung endpoint yang dipakai.
+    */
+
+    console.log(
+      "Abliteration request:",
+      {
+        model:payload.model,
+        messageCount:payload.messages.length,
+        stream:payload.stream,
+        temperature:payload.temperature,
+        max_tokens:payload.max_tokens
       }
+    );
+
+    const res =
+      await fetchWithRetry(
+        API_URL,
+        {
+          method:"POST",
+
+          headers:{
+            "Authorization":
+              "Bearer " + S.apiKey,
+
+            "Content-Type":
+              "application/json",
+
+            "Accept":
+              payload.stream
+                ? "text/event-stream"
+                : "application/json"
+          },
+
+          body:
+            JSON.stringify(payload),
+
+          signal:
+            abortCtl.signal
+        }
+      );
+
+    if(!res.ok){
+
+      const body =
+        await safeReadText(res);
+
+      throw apiError(
+        res.status,
+        body
+      );
+
     }
 
-    renderChat();saveChats();
-    setStatus("Selesai",false);
-    setTimeout(()=>setStatus("Siap",false),1500);
+    if(!res.body){
+
+      throw new Error(
+        "Browser tidak memberikan response body."
+      );
+
+    }
+
+    if(payload.stream){
+
+      await readStreamingResponse(
+        res,
+        am
+      );
+
+    }else{
+
+      await readNormalResponse(
+        res,
+        am
+      );
+
+    }
+
+    if(
+      !am.content &&
+      !am.reasoning
+    ){
+
+      throw new Error(
+        "API selesai tetapi tidak mengembalikan teks. Cek response di Console."
+      );
+
+    }
+
+    if(
+      !am.content &&
+      am.reasoning
+    ){
+
+      am.content =
+        "[Model mengirim reasoning tetapi tidak mengirim content.]";
+
+    }
+
+    saveChats();
+
+    renderChat();
+
+    setStatus(
+      "Selesai",
+      false
+    );
+
+    setTimeout(
+      ()=>{
+        if(!abortCtl){
+
+          setStatus(
+            "Siap",
+            false
+          );
+
+        }
+      },
+      1500
+    );
 
   }catch(err){
-    if(err.name==="AbortError"){setStatus("Dibatalkan",false)}
-    else{am.content="❌ Error: "+err.message;renderChat();setStatus("Error",false)}
+
+    console.error(
+      "Abliteration chat error:",
+      err
+    );
+
+    if(
+      err.name ===
+      "AbortError"
+    ){
+
+      am.content =
+        "⏹ Generasi dibatalkan.";
+
+      am.error = false;
+
+      setStatus(
+        "Dibatalkan",
+        false
+      );
+
+    }else{
+
+      am.content =
+        formatError(err);
+
+      am.error = true;
+
+      setStatus(
+        "Error",
+        false
+      );
+
+    }
+
+    saveChats();
+
+    renderChat();
+
   }finally{
-    btn.disabled=false;btn.textContent="Kirim";
-    abortCtl=null;
-    area.scrollTop=area.scrollHeight;
+
+    abortCtl = null;
+
+    btn.disabled = false;
+
+    btn.classList.remove(
+      "cancel"
+    );
+
+    btn.textContent =
+      "Kirim";
+
   }
+
 }
 
+
 /* ============================================================
-   UTIL
+   NORMAL JSON RESPONSE
    ============================================================ */
-function setStatus(t,a){
-  const s=document.getElementById("status");
-  s.textContent=t;s.classList.toggle("active",!!a);
+
+async function readNormalResponse(
+  res,
+  am
+){
+
+  const raw =
+    await res.text();
+
+  console.log(
+    "Abliteration raw response:",
+    raw
+  );
+
+  let data;
+
+  try{
+
+    data =
+      JSON.parse(raw);
+
+  }catch{
+
+    throw new Error(
+      "API mengembalikan response bukan JSON:\n" +
+      raw.slice(0,1000)
+    );
+
+  }
+
+  const choice =
+    data?.choices?.[0];
+
+  const message =
+    choice?.message;
+
+  if(!message){
+
+    throw new Error(
+      "Format response API tidak dikenali:\n" +
+      JSON.stringify(
+        data,
+        null,
+        2
+      ).slice(0,2000)
+    );
+
+  }
+
+  if(
+    typeof message.content ===
+    "string"
+  ){
+
+    am.content +=
+      message.content;
+
+  }else if(
+    Array.isArray(
+      message.content
+    )
+  ){
+
+    /*
+      Mendukung content array
+      jika provider menggunakannya.
+    */
+
+    for(
+      const part
+      of message.content
+    ){
+
+      if(
+        typeof part?.text ===
+        "string"
+      ){
+
+        am.content +=
+          part.text;
+
+      }
+
+    }
+
+  }
+
+  const reasoning =
+    message.reasoning_content ??
+    message.reasoning ??
+    choice.reasoning_content ??
+    "";
+
+  if(
+    typeof reasoning ===
+    "string"
+  ){
+
+    am.reasoning +=
+      reasoning;
+
+  }
+
+  renderChat();
+
 }
-function flashStatus(t){setStatus(t,true);setTimeout(()=>setStatus("Siap",false),1800)}
-function autoGrow(el){el.style.height="auto";el.style.height=Math.min(el.scrollHeight,120)+"px"}
-function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML}
+
+
+/* ============================================================
+   STREAMING SSE
+   ============================================================ */
+
+async function readStreamingResponse(
+  res,
+  am
+){
+
+  const reader =
+    res.body.getReader();
+
+  const decoder =
+    new TextDecoder();
+
+  let buffer = "";
+
+  while(true){
+
+    const {
+      done,
+      value
+    } =
+      await reader.read();
+
+    if(done){
+
+      break;
+
+    }
+
+    buffer +=
+      decoder.decode(
+        value,
+        {
+          stream:true
+        }
+      );
+
+    /*
+      SSE menggunakan blank line
+      sebagai pemisah event.
+    */
+
+    const events =
+      buffer.split(/\r?\n\r?\n/);
+
+    buffer =
+      events.pop() || "";
+
+    for(
+      const event
+      of events
+    ){
+
+      processSSEEvent(
+        event,
+        am
+      );
+
+    }
+
+    renderStreamingMessage(
+      am
+    );
+
+  }
+
+  /*
+    Flush decoder.
+  */
+
+  buffer +=
+    decoder.decode();
+
+  if(buffer.trim()){
+
+    processSSEEvent(
+      buffer,
+      am
+    );
+
+  }
+
+  renderStreamingMessage(
+    am
+  );
+
+}
+
+
+function processSSEEvent(
+  event,
+  am
+){
+
+  const lines =
+    event.split(/\r?\n/);
+
+  for(
+    const line
+    of lines
+  ){
+
+    const trimmed =
+      line.trim();
+
+    if(
+      !trimmed ||
+      trimmed.startsWith(":")
+    ){
+
+      continue;
+
+    }
+
+    if(
+      !trimmed.startsWith(
+        "data:"
+      )
+    ){
+
+      continue;
+
+    }
+
+    const dataText =
+      trimmed
+        .slice(5)
+        .trim();
+
+    if(
+      !dataText ||
+      dataText === "[DONE]"
+    ){
+
+      continue;
+
+    }
+
+    let data;
+
+    try{
+
+      data =
+        JSON.parse(
+          dataText
+        );
+
+    }catch(err){
+
+      /*
+        Jangan crash seluruh stream
+        hanya karena satu event invalid.
+      */
+
+      console.warn(
+        "SSE JSON tidak valid:",
+        dataText
+      );
+
+      continue;
+
+    }
+
+    const delta =
+      data?.choices?.[0]?.delta;
+
+    if(!delta){
+
+      continue;
+
+    }
+
+    if(
+      typeof delta.content ===
+      "string"
+    ){
+
+      am.content +=
+        delta.content;
+
+    }
+
+    const reasoning =
+      delta.reasoning_content ??
+      delta.reasoning ??
+      "";
+
+    if(
+      typeof reasoning ===
+      "string"
+    ){
+
+      am.reasoning +=
+        reasoning;
+
+    }
+
+  }
+
+}
+
+
+/* ============================================================
+   LIVE STREAM RENDER
+   ============================================================ */
+
+function renderStreamingMessage(
+  am
+){
+
+  const area =
+    document.getElementById(
+      "chat-area"
+    );
+
+  const messages =
+    area.querySelectorAll(
+      ".msg.assistant"
+    );
+
+  const last =
+    messages[
+      messages.length - 1
+    ];
+
+  if(!last) return;
+
+  const body =
+    last.querySelector(
+      ":scope > div"
+    );
+
+  if(body){
+
+    body.textContent =
+      am.content ||
+      "▌";
+
+  }
+
+  area.scrollTop =
+    area.scrollHeight;
+
+}
+
+
+/* ============================================================
+   RETRY / FETCH
+   ============================================================ */
+
+async function fetchWithRetry(
+  url,
+  options,
+  maxRetries = 2
+){
+
+  let lastError = null;
+
+  for(
+    let attempt = 0;
+    attempt <= maxRetries;
+    attempt++
+  ){
+
+    try{
+
+      const res =
+        await fetch(
+          url,
+          options
+        );
+
+      /*
+        Retry hanya untuk 429.
+        Jangan mengulang request
+        untuk 400/401/403/404.
+      */
+
+      if(
+        res.status !== 429 ||
+        attempt >= maxRetries
+      ){
+
+        return res;
+
+      }
+
+      const retryAfter =
+        Number(
+          res.headers.get(
+            "Retry-After"
+          )
+        );
+
+      const delay =
+        Number.isFinite(
+          retryAfter
+        )
+          ? retryAfter * 1000
+          : Math.min(
+              2000 *
+              Math.pow(
+                2,
+                attempt
+              ),
+              10000
+            );
+
+      setStatus(
+        "Rate limit — mencoba lagi…",
+        true
+      );
+
+      await sleep(
+        delay
+      );
+
+    }catch(err){
+
+      lastError = err;
+
+      if(
+        err.name ===
+        "AbortError"
+      ){
+
+        throw err;
+
+      }
+
+      if(
+        attempt >= maxRetries
+      ){
+
+        throw err;
+
+      }
+
+      await sleep(
+        1000 *
+        (attempt + 1)
+      );
+
+    }
+
+  }
+
+  throw (
+    lastError ||
+    new Error(
+      "Request gagal."
+    )
+  );
+
+}
+
+
+function sleep(ms){
+
+  return new Promise(
+    resolve =>
+      setTimeout(
+        resolve,
+        ms
+      )
+  );
+
+}
+
+
+/* ============================================================
+   API ERRORS
+   ============================================================ */
+
+async function safeReadText(res){
+
+  try{
+
+    return await res.text();
+
+  }catch{
+
+    return "";
+
+  }
+
+}
+
+
+function apiError(
+  status,
+  body
+){
+
+  let detail =
+    body || "Tidak ada detail.";
+
+  try{
+
+    const json =
+      JSON.parse(body);
+
+    if(
+      json?.error?.message
+    ){
+
+      detail =
+        json.error.message;
+
+    }else if(
+      json?.message
+    ){
+
+      detail =
+        json.message;
+
+    }else{
+
+      detail =
+        JSON.stringify(
+          json
+        );
+
+    }
+
+  }catch{
+
+    /*
+      body bukan JSON.
+    */
+
+  }
+
+  const messages = {
+
+    400:
+      "Request tidak valid. Periksa model ID dan parameter API.",
+
+    401:
+      "API Key ditolak atau tidak valid.",
+
+    403:
+      "Request ditolak oleh server/API key.",
+
+    404:
+      "Endpoint atau model tidak ditemukan.",
+
+    402:
+      "API membutuhkan kredit/pembayaran.",
+
+    408:
+      "Request timeout.",
+
+    429:
+      "Rate limit tercapai.",
+
+    500:
+      "Server API mengalami error internal.",
+
+    502:
+      "Gateway API menerima bad gateway response.",
+
+    503:
+      "Server API sedang tidak tersedia."
+
+  };
+
+  const friendly =
+    messages[status] ||
+    "API mengembalikan HTTP " +
+    status +
+    ".";
+
+  return new Error(
+    friendly +
+    "\n\nDetail:\n" +
+    detail.slice(0,1200)
+  );
+
+}
+
+
+function formatError(err){
+
+  if(
+    err instanceof TypeError
+  ){
+
+    return (
+      "❌ Network/CORS error.\n\n" +
+      "Browser gagal mengakses API.\n" +
+      "Periksa koneksi internet dan Console browser.\n\n" +
+      "Detail: " +
+      err.message
+    );
+
+  }
+
+  return (
+    "❌ " +
+    (
+      err?.message ||
+      String(err)
+    )
+  );
+
+}
+
+
+/* ============================================================
+   TEST API
+   ============================================================ */
+
+async function testConnection(){
+
+  const result =
+    document.getElementById(
+      "api-test-result"
+    );
+
+  const key =
+    document.getElementById(
+      "set-api-key"
+    ).value.trim();
+
+  const model =
+    document.getElementById(
+      "set-model"
+    ).value.trim();
+
+  if(!key){
+
+    result.textContent =
+      "❌ API Key kosong.";
+
+    return;
+
+  }
+
+  if(!model){
+
+    result.textContent =
+      "❌ Model ID kosong.";
+
+    return;
+
+  }
+
+  result.textContent =
+    "Mengirim test request…";
+
+  try{
+
+    const res =
+      await fetch(
+        API_URL,
+        {
+          method:"POST",
+
+          headers:{
+            "Authorization":
+              "Bearer " + key,
+
+            "Content-Type":
+              "application/json",
+
+            "Accept":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+
+              model:model,
+
+              messages:[
+                {
+                  role:"user",
+                  content:"Reply with exactly: API OK"
+                }
+              ],
+
+              temperature:0,
+
+              max_tokens:16,
+
+              stream:false
+
+            })
+        }
+      );
+
+    const raw =
+      await res.text();
+
+    if(!res.ok){
+
+      throw apiError(
+        res.status,
+        raw
+      );
+
+    }
+
+    let data;
+
+    try{
+
+      data =
+        JSON.parse(raw);
+
+    }catch{
+
+      throw new Error(
+        "Response bukan JSON:\n" +
+        raw.slice(0,500)
+      );
+
+    }
+
+    const answer =
+      data?.choices?.[0]?.message?.content;
+
+    result.textContent =
+      "✅ API berhasil.\n\n" +
+      "Model: " +
+      model +
+      "\n\n" +
+      "Response: " +
+      (
+        answer ||
+        "(content kosong)"
+      );
+
+  }catch(err){
+
+    console.error(
+      "API test error:",
+      err
+    );
+
+    result.textContent =
+      formatError(err);
+
+  }
+
+}
+
+
+/* ============================================================
+   UI UTIL
+   ============================================================ */
+
+function setStatus(
+  text,
+  active
+){
+
+  const s =
+    document.getElementById(
+      "status"
+    );
+
+  s.textContent =
+    text;
+
+  s.classList.toggle(
+    "active",
+    !!active
+  );
+
+}
+
+
+function flashStatus(text){
+
+  setStatus(
+    text,
+    true
+  );
+
+  setTimeout(
+    ()=>{
+      if(!abortCtl){
+
+        setStatus(
+          "Siap",
+          false
+        );
+
+      }
+    },
+    1800
+  );
+
+}
+
+
+function autoGrow(el){
+
+  el.style.height =
+    "auto";
+
+  el.style.height =
+    Math.min(
+      el.scrollHeight,
+      120
+    ) + "px";
+
+}
+
 
 /* ============================================================
    EVENTS
    ============================================================ */
-document.getElementById("user-input").addEventListener("keydown",e=>{
-  if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}
-});
-document.getElementById("user-input").addEventListener("input",e=>autoGrow(e.target));
-document.getElementById("settings-overlay").addEventListener("click",e=>{
-  if(e.target.id==="settings-overlay")closeSettings();
-});
-window.addEventListener("resize",()=>{
-  if(window.innerWidth>700) document.body.classList.add("sb-open");
-});
+
+document
+  .getElementById(
+    "user-input"
+  )
+  .addEventListener(
+    "keydown",
+    e=>{
+
+      if(
+        e.key === "Enter" &&
+        !e.shiftKey
+      ){
+
+        e.preventDefault();
+
+        handleSendButton();
+
+      }
+
+    }
+  );
+
+
+document
+  .getElementById(
+    "user-input"
+  )
+  .addEventListener(
+    "input",
+    e =>
+      autoGrow(
+        e.target
+      )
+  );
+
+
+document
+  .getElementById(
+    "settings-overlay"
+  )
+  .addEventListener(
+    "click",
+    e=>{
+
+      if(
+        e.target.id ===
+        "settings-overlay"
+      ){
+
+        closeSettings();
+
+      }
+
+    }
+  );
+
+
+window.addEventListener(
+  "resize",
+  ()=>{
+
+    if(
+      window.innerWidth > 700
+    ){
+
+      document.body.classList.add(
+        "sb-open"
+      );
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   START
+   ============================================================ */
 
 init();
+
 </script>
+
 </body>
 </html>
